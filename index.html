@@ -11,7 +11,18 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<ul id="thing-list" class="w-100"></ul>
+<ul id="thing-list" class="w-100">
+    <li id="new-item" class="w-100">
+        <div class="card mt-3 mx-4">
+            <div class="card-body d-flex align-items-center">
+                <form class="form input-group" role="form">
+                    <input type="text" placeholder="Create a Thing" class="form-control">
+                    <input type="submit" value="Create" class="btn btn-outline-primary">
+                </form>
+            </div>
+        </div>
+    </li>
+</ul>
 
 <body>
 
@@ -26,15 +37,61 @@
         crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/80d83fd1c9.js" crossorigin="anonymous"></script>
     <script id="thing" type="text/html">
-        <li class="w-100">
+        <li id="thing{{id}}" class="w-100">
                 <div class="card mt-3 mx-4">
                     <div class="card-body d-flex align-items-center">
-                        <i class="btn far fa-{{done? 'check-': ''}}circle"></i>
+                        <i class="btn far fa-{{done}}circle btn-toggle"></i>
                         {{subject}}
-                        <button class="btn btn-outline-danger ml-auto"><i class="far fa-trash-alt"></i></button>
+                        <i class="btn btn-outline-danger ml-auto btn-remove far fa-trash-alt prevent-default"></i>
                     </div>
                 </div>
             </li>
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            const data = [
+                { id: 1, subject: "Hi", done: false },
+                { id: 2, subject: "Jane", done: false },
+                { id: 3, subject: "Jim", done: false },
+                { id: 4, subject: "Julie", done: false },
+                { id: 5, subject: "Joe", done: false },
+                { id: 6, subject: "Jack", done: true }
+            ];
+
+            const spinnerClasses = 'fas fa-spinner fa-spin';
+            const notDoneClasses = 'far fa-circle';
+            const doneClasses = 'far fa-check-circle';
+            const temp = $.trim($('#thing').html());
+
+            $.each(data, function (index, obj) {
+                let x = temp.replace(/{{id}}/ig, obj.id)
+                    .replace(/{{subject}}/ig, obj.subject)
+                    .replace(/{{done}}/ig, obj.done ? 'check-' : '');
+                $(x).insertBefore('#new-item');
+            });
+
+            $('.prevent-default').on('click', (e) => e.preventDefault());
+
+            $('.btn-remove').on('click', function (e) {
+                e.preventDefault();
+                btn = $(e.target);
+                btn.removeClass('far fa-trash-alt').addClass(spinnerClasses); // Loading state
+
+                // Callback
+                btn.closest('li').remove();
+            });
+
+            $('.btn-toggle').on('click', function (e) {
+                e.preventDefault();
+                btn = $(e.target);
+                const isDone = btn.hasClass(doneClasses);
+                btn.removeClass(isDone ? doneClasses : notDoneClasses).addClass(spinnerClasses); // Loading state
+
+                // Callback
+                if (isDone) btn.removeClass(spinnerClasses).addClass(notDoneClasses);
+                else btn.removeClass(spinnerClasses).addClass(doneClasses);
+            });
+        })
     </script>
 </body>
 
