@@ -11,20 +11,19 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<ul id="thing-list" class="w-100">
-    <li id="new-item" class="w-100">
-        <div class="card mt-3 mx-4">
-            <div class="card-body d-flex align-items-center">
-                <form id="thing-creation-form" class="form input-group" role="form">
-                    <input type="text" id="thing-subject" placeholder="Create a Thing" class="form-control">
-                    <input type="submit" value="Create" class="btn btn-outline-primary">
-                </form>
-            </div>
-        </div>
-    </li>
-</ul>
-
 <body>
+    <ul id="thing-list" class="w-100">
+        <li id="new-item" class="w-100">
+            <div class="card mt-3 mx-4">
+                <div class="card-body d-flex align-items-center">
+                    <form id="thing-creation-form" class="form input-group" role="form">
+                        <input type="text" id="thing-subject" placeholder="Create a Thing" class="form-control">
+                        <input type="submit" value="Create" class="btn btn-outline-primary">
+                    </form>
+                </div>
+            </div>
+        </li>
+    </ul>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -38,43 +37,95 @@
     <script src="https://kit.fontawesome.com/80d83fd1c9.js" crossorigin="anonymous"></script>
     <script id="thing" type="text/html">
         <li id="thing{{id}}" class="w-100" data-thing-id="{{id}}">
-                <div class="card mt-3 mx-4">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="btn far fa-{{done}}circle btn-toggle"></i>
-                        {{subject}}
-                        <i class="btn btn-outline-danger ml-auto btn-remove far fa-trash-alt prevent-default"></i>
-                    </div>
+            <div class="card mt-3 mx-4">
+                <div class="card-body d-flex align-items-center">
+                    <i class="btn far fa-{{done}}circle btn-toggle"></i>
+                    {{subject}}
+                    <i class="btn btn-outline-danger ml-auto btn-remove far fa-trash-alt"></i>
                 </div>
-            </li>
+            </div>
+        </li>
     </script>
     <script type="text/javascript">
-        const spinnerClasses = 'fas fa-spinner fa-spin';
-        const notDoneClasses = 'far fa-circle';
-        const doneClasses = 'far fa-check-circle';
-        const temp = $.trim($('#thing').html());
-        const _list = $('#thing-list');
-        const _subject = $('#thing-subject');
+        const _subject = $("#thing-subject");
+        const spinnerClasses = "fas fa-spinner fa-spin";
+        const notDoneClasses = "far fa-circle";
+        const doneClasses = "far fa-check-circle";
+        const temp = $.trim($("#thing").html());
         let db;
 
+        // TODO Util
+        function isset(accessor) {
+            try {
+                return typeof accessor() !== 'undefined'
+            } catch (e) {
+                return false
+            }
+        }
+
+        function createThing(thing, success, complete, failure) {
+            let transaction = db.transaction(["things_os"], "readwrite");
+            let objectStore = transaction.objectStore("things_os");
+            let request = objectStore.add(thing);
+            request.onsuccess = success;
+            transaction.oncomplete = complete;
+            transaction.onerror = failure;
+        }
+
+        function readThings() {
+            let things = [];
+            var defer = $.Deferred();
+            let objectStore = db.transaction("things_os").objectStore("things_os");
+            objectStore.openCursor().onsuccess = function (e) {
+                let cursor = e.target.result;
+                if (cursor) {
+                    things.push(cursor.value);
+                    cursor.continue();
+                } else defer.resolve(things);
+            };
+
+            return defer.promise();
+        }
+
+        function updateThing(thing, callback) {
+            let transaction = db.transaction(["things_os"], "readwrite");
+            let objectStore = transaction.objectStore("things_os");
+            var request = objectStore.get(thing.id);
+            request.onsuccess = function (e) {
+                var obj = request.result;
+                if (!obj) {
+                    console.log('no matching object for id, canceling update', id);
+                    return;
+                }
+
+                if (isset(() => thing.subject)) obj.subject = thing.subject;
+                if (isset(() => thing.content)) obj.content = thing.content;
+                if (isset(() => thing.context)) obj.context = thing.context;
+                obj.updated = Date.now ? Date.now() : new Date().getTime();
+                objectStore.put(obj);
+                callback();
+            }
+        }
+
         function refreshList(things) {
-            $('#thing-list li:not(:last)').remove();
+            $("#thing-list li:not(:last)").remove();
             $.each(things, function (index, obj) {
                 let x = temp.replace(/{{id}}/ig, obj.id)
                     .replace(/{{subject}}/ig, obj.subject)
-                    .replace(/{{done}}/ig, obj.context ? 'check-' : '');
-                $(x).insertBefore('#new-item');
+                    .replace(/{{done}}/ig, obj.context ? "check-" : "");
+                $(x).insertBefore("#new-item");
             });
         }
 
         $(document).ready(function () {
-            let request = window.indexedDB.open('things_db', 1);
+            let request = window.indexedDB.open("things_db", 1);
             request.onerror = function () {
                 alert("Oops! Something has gone wrong.");
-                console.log('Database failed to open');
+                console.log("Database failed to open");
             };
 
             request.onsuccess = function () {
-                console.log('Database opened successfully');
+                console.log("Database opened successfully");
                 db = request.result;
                 $.when(readThings()).done((data) => refreshList(data))
                     .fail(function (data) {/* TODO */ });
@@ -82,62 +133,41 @@
 
             request.onupgradeneeded = function (e) {
                 let db = e.target.result;
-                let objectStore = db.createObjectStore('things_os', { keyPath: 'id', autoIncrement: true });
-                objectStore.createIndex('created', 'created', { unique: false });
-                objectStore.createIndex('updated', 'updated', { unique: false });
-                objectStore.createIndex('subject', 'subject', { unique: false });
-                objectStore.createIndex('content', 'content', { unique: false });
-                objectStore.createIndex('context', 'context', { unique: false });
-                console.log('Database setup complete');
+                let objectStore = db.createObjectStore("things_os", { keyPath: "id", autoIncrement: true });
+                objectStore.createIndex("created", "created", { unique: false });
+                objectStore.createIndex("updated", "updated", { unique: false });
+                objectStore.createIndex("subject", "subject", { unique: false });
+                objectStore.createIndex("content", "content", { unique: false });
+                objectStore.createIndex("context", "context", { unique: false });
+                console.log("Database setup complete");
             };
+        });
 
-            function createThing(thing, success, complete, failure) {
-                let transaction = db.transaction(['things_os'], 'readwrite');
-                let objectStore = transaction.objectStore('things_os');
-                let request = objectStore.add(thing);
-                request.onsuccess = success;
-                transaction.oncomplete = complete
-                transaction.onerror = failure;
-            }
-
-            function readThings() {
-                let things = [];
-                var defer = $.Deferred();
-                let objectStore = db.transaction('things_os').objectStore('things_os');
-                objectStore.openCursor().onsuccess = function (e) {
-                    let cursor = e.target.result;
-                    if (cursor) {
-                        things.push(cursor.value);
-                        cursor.continue();
-                    } else defer.resolve(things);
-                };
-
-                return defer.promise();
-            }
-
-            $('.prevent-default').on('click', (e) => e.preventDefault());
-
-            $('.btn-remove').on('click', function (e) {
+        $(function () {
+            $("#thing-list").on("click", ".btn-remove", function (e) {
                 e.preventDefault();
-                btn = $(e.target);
-                btn.removeClass('far fa-trash-alt').addClass(spinnerClasses); // Loading state
+                const _btn = $(e.target);
+                _btn.removeClass("far fa-trash-alt").addClass(spinnerClasses); // Loading state
 
                 // Callback
-                btn.closest('li').remove();
-            });
-
-            $('.btn-toggle').on('click', function (e) {
+                _btn.closest("li").remove();
+            }).on("click", ".btn-toggle", function (e) {
                 e.preventDefault();
-                btn = $(e.target);
-                const isDone = btn.hasClass(doneClasses);
-                btn.removeClass(isDone ? doneClasses : notDoneClasses).addClass(spinnerClasses); // Loading state
+                const _btn = $(e.target);
+                const isDone = _btn.hasClass(doneClasses);
+                _btn.removeClass(isDone ? doneClasses : notDoneClasses).addClass(spinnerClasses); // Loading state
+                const updatedThing = {
+                    id: _btn.closest('li').data('thing-id'),
+                    context: !_btn.hasClass(doneClasses)
+                }
 
-                // Callback
-                if (isDone) btn.removeClass(spinnerClasses).addClass(notDoneClasses);
-                else btn.removeClass(spinnerClasses).addClass(doneClasses);
+                updateThing(updatedThing, () => {
+                    if (isDone) _btn.removeClass(spinnerClasses).addClass(notDoneClasses);
+                    else _btn.removeClass(spinnerClasses).addClass(doneClasses);
+                });
             });
 
-            $('#thing-creation-form').submit(function (e) {
+            $("#thing-creation-form").submit(function (e) {
                 e.preventDefault();
                 const now = Date.now ? Date.now() : new Date().getTime();
                 const newThing = {
@@ -146,17 +176,17 @@
                     subject: _subject.val(),
                     content: "",
                     context: false
-                }
+                };
 
                 createThing(
                     newThing,
-                    () => _subject.val(''), // Move this out
+                    () => _subject.val(""), // Move this out
                     () => $.when(readThings()).done((data) => refreshList(data))
-                            .fail(function (data) {/* TODO */ }),
-                    () => console.log('Transaction not opened due to error.')
+                        .fail(function (data) {/* TODO */ }),
+                    () => console.log("Transaction not opened due to error.")
                 );
             });
-        });
+        })
     </script>
 </body>
 
