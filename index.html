@@ -107,6 +107,13 @@
             }
         }
 
+        function deleteThing(thingID, callback) {
+            let transaction = db.transaction(['things_os'], 'readwrite');
+            let objectStore = transaction.objectStore('things_os');
+            let request = objectStore.delete(thingID);
+            transaction.oncomplete = callback
+        }
+
         function refreshList(things) {
             $("#thing-list li:not(:last)").remove();
             $.each(things, function (index, obj) {
@@ -147,15 +154,14 @@
             $("#thing-list").on("click", ".btn-remove", function (e) {
                 e.preventDefault();
                 const _btn = $(e.target);
-                _btn.removeClass("far fa-trash-alt").addClass(spinnerClasses); // Loading state
+                _btn.removeClass("far fa-trash-alt").addClass(spinnerClasses);
 
-                // Callback
-                _btn.closest("li").remove();
+                deleteThing(_btn.closest('li').data('thing-id'), () => _btn.closest("li").remove());
             }).on("click", ".btn-toggle", function (e) {
                 e.preventDefault();
                 const _btn = $(e.target);
                 const isDone = _btn.hasClass(doneClasses);
-                _btn.removeClass(isDone ? doneClasses : notDoneClasses).addClass(spinnerClasses); // Loading state
+                _btn.removeClass(isDone ? doneClasses : notDoneClasses).addClass(spinnerClasses);
                 const updatedThing = {
                     id: _btn.closest('li').data('thing-id'),
                     context: !_btn.hasClass(doneClasses)
