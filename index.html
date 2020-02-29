@@ -12,10 +12,41 @@
 </head>
 
 <body>
-    <div class="container">
+    <nav class="teal">
+        <div class="nav-wrapper container">
+            <a href="#!" class="brand-logo">Things</a>
+            <a href="#" data-target="sidebar" class="sidenav-trigger">
+                <i class="material-icons">menu</i>
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <ul class="sidenav" id="sidebar">
+        <li>
+            <div class="user-view">
+                <div class="background">
+                    <img src="https://picsum.photos/id/0/300/150.jpg">
+                </div>
+                <a href="#user"><img class="circle"
+                        src="https://avatars3.githubusercontent.com/u/26766955?s=460&v=4"></a>
+                <a href="#name"><span class="white-text name">sixpeteunder</span></a>
+                <a href="#email"><span class="white-text email">plenjo15@gmail.com</span></a>
+            </div>
+        </li>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+
+    <div id="main" class="container">
         <ul id="thing-list">
             <li id="new-item">
-                <div class="card-panel">
+                <div class="card-panel hoverable">
                     <form id="thing-creation-form" role="form">
                         <div class="row">
                             <div class="col s12">
@@ -26,8 +57,8 @@
                                         Enter a brief overview of your Thing&trade;
                                     </span>
                                 </div>
-                                <button type="submit" class="waves-effect waves-light btn white-text"><i
-                                        class="material-icons left">add</i>Create</button>
+                                <button type="submit" id="submit" class="waves-effect waves-light btn white-text">
+                                    <i class="material-icons left">add</i>Create</button>
                             </div>
                         </div>
                     </form>
@@ -44,7 +75,7 @@
         <li id="thing{{id}}" class="w-100" data-thing-id="{{id}}">
             <div class="card-panel hoverable valign-wrapper">
                 <label>
-                    <input type="checkbox" class="btn-toggle"/>
+                    <input type="checkbox" class="btn-toggle" {{context}}/>
                     <span>&nbsp;</span>
                 </label>
                 {{subject}}
@@ -60,7 +91,7 @@
         UpUp.start({
             'cache-version': 'v2',
             'content-url': '/index.html',
-            'assets': ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css', 'https://fonts.googleapis.com/icon?family=Material+Icons','/assets/css/style.css', 'https://code.jquery.com/jquery-3.4.1.slim.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js', '/assets/js/index.js'],
+            'assets': ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css', 'https://fonts.googleapis.com/icon?family=Material+Icons', '/assets/css/style.css', 'https://code.jquery.com/jquery-3.4.1.slim.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js', '/assets/js/index.js', 'https://avatars3.githubusercontent.com/u/26766955?s=460&v=4', 'https://picsum.photos/id/0/300/150.jpg'],
             'service-worker-url': '/upup.sw.min.js'
         });
     </script>
