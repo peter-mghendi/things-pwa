@@ -76,6 +76,8 @@ function refreshList(things) {
 }
 
 $(document).ready(function () {
+    $('input#thing-subject').characterCounter();
+
     let request = window.indexedDB.open("things_db", 1);
     request.onerror = function () {
         alert("Oops! Something has gone wrong.");
@@ -83,7 +85,6 @@ $(document).ready(function () {
     };
 
     request.onsuccess = function () {
-        console.log("Database opened successfully");
         db = request.result;
         $.when(readThings()).done((data) => refreshList(data))
             .fail(function (data) {/* TODO */ });
@@ -108,6 +109,7 @@ $(function () {
         _btn.removeClass("far fa-trash-alt").addClass(spinnerClasses);
 
         deleteThing(_btn.closest('li').data('thing-id'), () => _btn.closest("li").remove());
+        M.toast({html: 'Deleted!'});
     }).on("click", ".btn-toggle", function (e) {
         e.preventDefault();
         const _btn = $(e.target);
@@ -142,5 +144,7 @@ $(function () {
                 .fail(function (data) {/* TODO */ }),
             () => console.log("Transaction not opened due to error.")
         );
+
+        M.toast({html: 'Created!'});
     });
 });
