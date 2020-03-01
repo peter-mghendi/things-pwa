@@ -76,18 +76,23 @@ $(document).ready(function () {
     $('.sidenav').sidenav();
     $('input#thing-subject').characterCounter();
 
+    if (!localStorage.getItem('isInformedOfCookie')) 
+        M.Modal.init(document.querySelector('#cookieModal'), { onCloseEnd: () => {
+            localStorage.setItem('isInformedOfCookie', true);
+            M.toast({html: 'Changes saved!'});
+        }
+    }).open();
+
     let request = window.indexedDB.open("things_db", 1);
     request.onerror = function () {
-        alert("Oops! Something has gone wrong.");
+        M.toast({ html: 'Oops! Something went wrong.' });
         console.log("Database failed to open.");
     };
 
     request.onsuccess = function () {
         db = request.result;
         $.when(readThings()).done((data) => refreshList(data))
-            .fail(function (data) {
-                M.toast({ html: 'Oops! Something went wrong.' });
-            });
+            .fail((data) => M.toast({ html: 'Oops! Something went wrong.' }));
     };
 
     request.onupgradeneeded = function (e) {
@@ -128,23 +133,21 @@ $(function () {
         _submit.attr("disabled", true);
 
         const now = Date.now ? Date.now() : new Date().getTime();
-        const newThing = {
+        const newThing = { // TODO Content field, soft delete
             created: now,
             updated: now,
             subject: _subject.val(),
-            content: "",
+            content: "", 
             context: false
         };
 
         createThing(
             newThing,
-            () => _subject.val(""), // Move this out
+            () => _subject.val(""), 
             () => $.when(readThings()).done((data) => {
                 M.toast({ html: 'Created!' });
                 refreshList(data);
-            }).fail(function (data) {
-                M.toast({ html: 'Oops! Something went wrong.' });
-            }),
+            }).fail((data) => M.toast({ html: 'Oops! Something went wrong.' })),
             () => {
                 M.toast({ html: 'Oops! Something went wrong.' });
                 console.log("Transaction not opened due to error.");

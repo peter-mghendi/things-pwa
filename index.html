@@ -13,12 +13,12 @@
 
 <body>
     <nav class="teal">
-        <div class="nav-wrapper container">
-            <a href="#!" class="brand-logo">Things</a>
+        <div class="nav-wrapper">
+            <a href="#!" class="brand-logo mx-1-5">Things</a>
             <a href="#" data-target="sidebar" class="sidenav-trigger">
                 <i class="material-icons">menu</i>
             </a>
-            <ul class="right hide-on-med-and-down">
+            <ul class="right hide-on-med-and-down mx-1-5">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="#">About</a></li>
@@ -67,6 +67,17 @@
         </ul>
     </div>
 
+    <div id="cookieModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h5>Have a cookie!</h5>
+            <p>This site uses cookies to deliver an enhanced user experience. By continuing to use this site, you accept
+                these terms.</p>
+        </div>
+        <div class="modal-footer">
+            <button href="#!" class="modal-close waves-effect waves-teal btn-flat">Accept</button>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
@@ -79,7 +90,7 @@
                     <span>&nbsp;</span>
                 </label>
                 {{subject}}
-                <button class="btn-remove btn-flat waves-effect waves-light red-text right valign">
+                <button class="btn-remove btn-flat waves-effect waves-light red-text ml-auto">
                     <i class="material-icons">clear</i>
                 </button>
             </div>
