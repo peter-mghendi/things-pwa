@@ -56,6 +56,16 @@ const app = $.sammy('#main', function () {
         console.log(context);
         this.app.swap(`Thing ${context.params['id']}`);
     });
+
+    this.get('#/things/:id/delete', function (context) {
+        const id = parseInt(context.params["id"]);
+        const _btn = $(`#btn-delete-${id}`);
+        console.log(_btn, id)
+        _btn.attr("disabled", true);
+        deleteThing(id, () => _btn.closest("li").remove());
+        M.toast({ html: 'Deleted!' });
+        instance.quietRoute("#/");
+    });
 });
 
 function isset(accessor) {
@@ -163,13 +173,7 @@ $(document).ready(function () {
 });
 
 $(function () {
-    $("#thing-list").on("click", ".btn-remove", function (e) {
-        e.preventDefault();
-        const _btn = $(e.target);
-        _btn.attr("disabled", true);
-        deleteThing(_btn.closest('li').data('thing-id'), () => _btn.closest("li").remove());
-        M.toast({ html: 'Deleted!' });
-    }).on("change", ".btn-toggle", function (e) {
+    $("#thing-list").on("change", ".btn-toggle", function (e) {
         e.preventDefault();
         const _btn = $(e.target);
         const isDone = _btn.is(":checked");
