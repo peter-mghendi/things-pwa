@@ -12,15 +12,14 @@ const app = $.sammy('#main', function () {
     }
 
     this.get('#/', (context) => {
-        if (instance.quiet) return
-        context.partial('assets/templates/home.html');
+        if (!instance.quiet) context.partial('assets/templates/home.html');
     });
 
     this.get('#/settings', (context) => context.app.swap('Settings Page')); // TODO
 
     this.get('#/about', (context) => context.app.swap('About Page')); // TODO
 
-    this.post('#/things/new', function (id) {
+    this.post('#/things/new', function () {
         $("#thing-subject").attr("disabled", true);
         $("#submit").attr("disabled", true);
 
@@ -59,11 +58,11 @@ const app = $.sammy('#main', function () {
 
     this.get('#/things/:id/delete', function (context) {
         const id = parseInt(context.params["id"]);
-        const _btn = $(`#btn-delete-${id}`);
-        console.log(_btn, id)
-        _btn.attr("disabled", true);
-        deleteThing(id, () => _btn.closest("li").remove());
-        M.toast({ html: 'Deleted!' });
+        $(`#btn-delete-${id}`).attr("disabled", true);
+        deleteThing(id, () => {
+            $(`#thing-${id}`).remove()
+            M.toast({ html: 'Deleted!' });
+        });
         instance.quietRoute("#/");
     });
 });
@@ -141,12 +140,13 @@ $(document).ready(function () {
     $('.sidenav').sidenav();
     $('input#thing-subject').characterCounter();
 
-    if (!localStorage.getItem('isInformedOfCookie')) 
-        M.Modal.init(document.querySelector('#cookieModal'), { onCloseEnd: () => {
-            localStorage.setItem('isInformedOfCookie', true);
-            M.toast({html: 'Changes saved!'});
-        }
-    }).open();
+    if (!localStorage.getItem('isInformedOfCookie'))
+        M.Modal.init(document.querySelector('#cookieModal'), {
+            onCloseEnd: () => {
+                localStorage.setItem('isInformedOfCookie', true);
+                M.toast({ html: 'Changes saved!' });
+            }
+        }).open();
 
     let request = window.indexedDB.open("things_db", 1);
     request.onerror = function () {
@@ -170,10 +170,8 @@ $(document).ready(function () {
         objectStore.createIndex("context", "context", { unique: false });
         console.log("Database setup complete.");
     };
-});
 
-$(function () {
-    $("#thing-list").on("change", ".btn-toggle", function (e) {
+    $("#main").on("change", ".btn-toggle", function (e) {
         e.preventDefault();
         const _btn = $(e.target);
         const isDone = _btn.is(":checked");
