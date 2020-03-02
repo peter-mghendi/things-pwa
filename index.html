@@ -62,13 +62,13 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script id="thing" type="text/html">
-        <li id="thing-{{id}}" data-thing-id="{{id}}">
+        <li id="thing-{{id}}" class="thing" data-thing-id="{{id}}">
             <div class="card-panel hoverable valign-wrapper">
                 <label>
                     <input type="checkbox" class="btn-toggle" {{context}}/>
                     <span>&nbsp;</span>
                 </label>
-                {{subject}}
+                <span class="thing-link">{{subject}}</span>
                 <a href="#/things/{{id}}/delete" id="btn-delete-{{id}}" class="btn-remove btn-flat waves-effect waves-light red-text ml-auto">
                     <i class="material-icons">clear</i>
                 </a>

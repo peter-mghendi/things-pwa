@@ -15,9 +15,9 @@ const app = $.sammy('#main', function () {
         if (!instance.quiet) context.partial('assets/templates/home.html');
     });
 
-    this.get('#/settings', (context) => context.app.swap('Settings Page')); // TODO
+    this.get('#/settings', (context) => context.partial('assets/templates/settings.html')); // TODO
 
-    this.get('#/about', (context) => context.app.swap('About Page')); // TODO
+    this.get('#/about', (context) => context.partial('assets/templates/about.html')); 
 
     this.post('#/things/new', function () {
         $("#thing-subject").attr("disabled", true);
@@ -51,10 +51,7 @@ const app = $.sammy('#main', function () {
         return false;
     });
 
-    this.get('#/things/:id', function (context) {
-        console.log(context);
-        this.app.swap(`Thing ${context.params['id']}`);
-    });
+    this.get('#/things/:id', (context) => context.partial('assets/templates/thing.html'));
 
     this.get('#/things/:id/delete', function (context) {
         const id = parseInt(context.params["id"]);
@@ -171,7 +168,7 @@ $(document).ready(function () {
         console.log("Database setup complete.");
     };
 
-    $("#main").on("change", ".btn-toggle", function (e) {
+    $("#main").on("change", ".btn-toggle", (e) => {
         e.preventDefault();
         const _btn = $(e.target);
         const isDone = _btn.is(":checked");
@@ -182,7 +179,7 @@ $(document).ready(function () {
         }
 
         updateThing(updatedThing, () => _btn.prop("indeterminate", false).attr("disabled", false).prop("checked", isDone));
-    });
+    }).on("click", ".thing-link", (e) => app.setLocation(`#/things/${$(e.target).closest('.thing').data('thing-id')}`));
 
     app.run();
 });

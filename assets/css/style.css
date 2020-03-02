@@ -1,5 +1,9 @@
-.ml-auto {
+.ml-auto,.mx-auto {
     margin-left: auto;
+}
+
+.mr-auto,.mx-auto {
+    margin-right: auto;
 }
 
 .mx-1-5 {
