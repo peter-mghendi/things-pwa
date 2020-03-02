@@ -3,6 +3,51 @@ const _submit = $("#submit");
 const template = $.trim($("#thing").html());
 let db;
 
+const app = $.sammy('#main', function () {
+    this.get('#/', (context) => context.partial('assets/templates/home.html'));
+
+    this.get('#/settings', (context) => context.app.swap('Settings Page')); // TODO
+
+    this.get('#/about', (context) => context.app.swap('About Page')); // TODO
+
+    this.post('#/things/new', function (id) {
+        _subject.attr("disabled", true);
+        _submit.attr("disabled", true);
+
+        const now = Date.now ? Date.now() : new Date().getTime();
+        const newThing = { // TODO Content field, soft delete
+            created: now,
+            updated: now,
+            subject: this.params['thing-subject'],
+            content: "",
+            context: false
+        };
+
+        createThing(
+            newThing,
+            () => _subject.val(""),
+            () => {
+                M.toast({ html: 'Created!' });
+                $.when(readThings()).done((data) => refreshList(data))
+                    .fail((data) => M.toast({ html: 'Oops! Something went wrong.' }))
+            },
+            () => {
+                M.toast({ html: 'Oops! Something went wrong.' });
+                console.log("Transaction not opened due to error.");
+            }
+        );
+
+        _subject.attr("disabled", false);
+        _submit.attr("disabled", false);
+        this.quietRoute('#/');
+    });
+
+    this.get('#/things/:id', function (context) {
+        console.log(context);
+        this.app.swap(`Thing ${context.params['id']}`);
+    });
+});
+
 function isset(accessor) {
     try {
         return typeof accessor() !== 'undefined'
@@ -127,34 +172,5 @@ $(function () {
         updateThing(updatedThing, () => _btn.prop("indeterminate", false).attr("disabled", false).prop("checked", isDone));
     });
 
-    $("#thing-creation-form").submit(function (e) {
-        e.preventDefault();
-        _subject.attr("disabled", true);
-        _submit.attr("disabled", true);
-
-        const now = Date.now ? Date.now() : new Date().getTime();
-        const newThing = { // TODO Content field, soft delete
-            created: now,
-            updated: now,
-            subject: _subject.val(),
-            content: "", 
-            context: false
-        };
-
-        createThing(
-            newThing,
-            () => _subject.val(""), 
-            () => $.when(readThings()).done((data) => {
-                M.toast({ html: 'Created!' });
-                refreshList(data);
-            }).fail((data) => M.toast({ html: 'Oops! Something went wrong.' })),
-            () => {
-                M.toast({ html: 'Oops! Something went wrong.' });
-                console.log("Transaction not opened due to error.");
-            }
-        );
-
-        _subject.attr("disabled", false);
-        _submit.attr("disabled", false);
-    });
+    app.run();
 });

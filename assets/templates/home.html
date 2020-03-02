@@ -1,0 +1,21 @@
+<ul id="thing-list">
+    <li id="new-item">
+        <div class="card-panel hoverable">
+            <form action="#/things/new" method="post" id="thing-creation-form" role="form">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="input-field">
+                            <input id="thing-subject" name="thing-subject" type="text" class="validate" data-length="32">
+                            <label for="thing-subject">Subject</label>
+                            <span class="helper-text" data-error="Invalid :(" data-success="Valid :)">
+                                Enter a brief overview of your Thing&trade;
+                            </span>
+                        </div>
+                        <button type="submit" id="submit" class="waves-effect waves-light btn white-text">
+                            <i class="material-icons left">add</i>Create</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </li>
+</ul>
