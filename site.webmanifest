@@ -1,7 +1,7 @@
 {
     "name": "Things",
     "short_name": "Things",
-    "start_url": "./#/",
+    "start_url": ".",
     "scope" : "./",
     "icons": [
         {
@@ -12,6 +12,11 @@
         {
             "src": "/things-pwa/android-chrome-256x256.png",
             "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/things-pwa/android-chrome-512x512.png",
+            "sizes": "512x512",
             "type": "image/png"
         }
     ],
