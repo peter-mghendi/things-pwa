@@ -1,0 +1,21 @@
+{
+    "name": "Things",
+    "short_name": "Things",
+    "start_url": "./#/",
+    "scope" : "./",
+    "icons": [
+        {
+            "src": "/things-pwa/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/things-pwa/android-chrome-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#009688",
+    "background_color": "#009688",
+    "display": "standalone"
+}
