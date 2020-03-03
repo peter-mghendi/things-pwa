@@ -39,19 +39,18 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
     <div class="navbar-fixed">
         <nav class="teal">
             <div class="nav-wrapper">
-                <a href="#/" class="brand-logo left hide-on-med-and-down mx-1-5">Things</a>
+                <a href="#/" class="brand-logo left hide-on-med-and-down" style="margin-right: 1.5rem !important; margin-left: 1.5rem !important;">Things</a>
                 <a href="#/" class="brand-logo center hide-on-large-only">Things</a>
                 <a href="#" data-target="sidebar" class="sidenav-trigger">
                     <i class="material-icons">menu</i>
                 </a>
-                <ul class="right hide-on-med-and-down mx-1-5">
+                <ul class="right hide-on-med-and-down" style="margin-right: 1.5rem !important; margin-left: 1.5rem !important;">
                     <li><a href="#/">Home</a></li>
                     <li><a href="#/settings">Settings</a></li>
                     <li><a href="#/about">About</a></li>
@@ -64,10 +63,11 @@
         <li>
             <div class="user-view">
                 <div class="background">
-                    <img src="https://picsum.photos/id/0/300/150.jpg">
+                    <img src="https://picsum.photos/id/0/300/150.jpg" alt="navbar background">
                 </div>
-                <a href="#user"><img class="circle"
-                        src="https://avatars3.githubusercontent.com/u/26766955?s=460&v=4"></a>
+                <a href="#user">
+                    <img class="circle" src="https://avatars3.githubusercontent.com/u/26766955?s=460&v=4" alt="user image">
+                </a>
                 <a href="#name"><span class="white-text name">sixpeteunder</span></a>
                 <a href="#email"><span class="white-text email">plenjo15@gmail.com</span></a>
             </div>
@@ -100,7 +100,7 @@
                     <span>&nbsp;</span>
                 </label>
                 <span class="thing-link">{{subject}}</span>
-                <a href="#/things/{{id}}/delete" id="btn-delete-{{id}}" class="btn-remove btn-flat waves-effect waves-light red-text ml-auto">
+                <a href="#/things/{{id}}/delete" id="btn-delete-{{id}}" class="btn-remove btn-flat waves-effect waves-light red-text" style="margin-left: auto;">
                     <i class="material-icons">clear</i>
                 </a>
             </div>
@@ -113,7 +113,7 @@
         UpUp.start({
             'cache-version': 'v2',
             'content-url': '/index.html',
-            'assets': ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css', 'https://fonts.googleapis.com/icon?family=Material+Icons', '/assets/css/style.css', 'https://code.jquery.com/jquery-3.4.1.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js', '/assets/js/index.js', 'https://avatars3.githubusercontent.com/u/26766955?s=460&v=4', 'https://picsum.photos/id/0/300/150.jpg'],
+            'assets': ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css', 'https://fonts.googleapis.com/icon?family=Material+Icons', 'https://code.jquery.com/jquery-3.4.1.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js', '/assets/js/index.js', 'https://avatars3.githubusercontent.com/u/26766955?s=460&v=4', 'https://picsum.photos/id/0/300/150.jpg'],
             'service-worker-url': '/upup.sw.min.js'
         });
     </script>
